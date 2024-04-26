@@ -1,0 +1,21 @@
+.toolbar {
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: -8px 8px 13px #ededed,
+        8px -8px 13px #ffffff;
+    padding: 10px 10px;
+    margin-bottom: 15px;
+}
+
+.toolbar-grp>* {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.toolbar-grp {
+    margin: 0 10px;
+}
+
+.editor-wrapper :focus-visible {
+    outline: none;
+}

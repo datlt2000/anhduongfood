@@ -1,0 +1,34 @@
+body[data-theme='dark'] {
+    --bs-body-bg: rgb(0 0 0);
+    --bs-body-color: rgb(36 62 99);
+    --primary-color: rgb(100 21 255);
+    --primary-hover-color: rgb(80 17 204);
+    --light-color: #e2e8f0;
+    --light-hover-color: rgb(203 213 224);
+    --bs-body-dark-color: #fff;
+    --heading-title-color: rgb(60 13 153);
+}
+
+body[data-theme='dark'] .navbar {
+    --bs-navbar-color: rgb(36 62 99) !important;
+}
+
+body[data-theme='dark'] .btn-primary {
+    --bs-btn-color: var(--bs-body-dark-color);
+    --bs-btn-bg: var(--primary-color);
+    --bs-btn-border-color: var(--primary-color);
+    --bs-btn-hover-color: var(--bs-body-dark-color);
+    --bs-btn-hover-bg: var(--primary-hover-color);
+    --bs-btn-hover-border-color: var(--primary-hover-color);
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+}
+
+body[data-theme='light'] .btn-light {
+    --bs-btn-color: var(--bs-body-color);
+    --bs-btn-bg: var(--light-color);
+    --bs-btn-border-color: var(--light-color);
+    --bs-btn-hover-color: var(--bs-body-color);
+    --bs-btn-hover-bg: var(--light-hover-color);
+    --bs-btn-hover-border-color: var(--light-hover-color);
+    --bs-btn-focus-shadow-rgb: 211, 212, 213;
+}
