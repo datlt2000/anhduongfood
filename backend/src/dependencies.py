@@ -1,7 +1,6 @@
 from typing import Annotated
 from src.models.database import SessionLocal
 from fastapi import Header, HTTPException
-from src.models.database import Base
 
 
 async def get_token_header(x_token: Annotated[str, Header()]):

@@ -1,5 +1,4 @@
-from pydantic import BaseModel, Field
-from datetime import date
+from pydantic import BaseModel
 
 
 class PostRequest(BaseModel):
