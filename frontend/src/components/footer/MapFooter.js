@@ -40,7 +40,7 @@ export default function MapFooter(props) {
                     </Col>
                     <Col lg={{ span: 4 }}>
                         <div className="h-100 d-block" style={{ backgroundColor: "#fff", padding: '0.5rem' }}>
-                            <iframe id="map1" title="map1" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1126.3998576720692!2d105.70064885749628!3d19.86351351677587!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3136f74ef1dac9d1%3A0x5b85999bc8179f2a!2zQ8ahbSBjaMOheSDDgW5oIETGsMahbmc!5e0!3m2!1sen!2sus!4v1713254861878!5m2!1sen!2sus" width="100%" height="100%" style={{ border: 0 }} loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <iframe id="map1" title="map1" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1126.3998576720692!2d105.70064885749628!3d19.86351351677587!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3136f74ef1dac9d1%3A0x5b85999bc8179f2a!2zQ8ahbSBjaMOheSDDgW5oIETGsMahbmc!5e0!3m2!1sen!2sus!4v1713254861878!5m2!1sen!2sus" width="100%" height="100%" style={{ border: 0 }} loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                     </Col>
                 </Row>

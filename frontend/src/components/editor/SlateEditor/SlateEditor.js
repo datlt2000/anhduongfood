@@ -36,7 +36,7 @@ const SlateEditor = forwardRef((props, ref) => {
         Transforms.removeNodes(editor, {
             at: [0],
         })
-        Transforms.insertNodes(editor, { children: newValue })
+        Transforms.insertNodes(editor, newValue)
     }
 
     useImperativeHandle(ref, () => ({

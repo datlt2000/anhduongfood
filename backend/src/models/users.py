@@ -18,5 +18,3 @@ class User(database.Base):
         ],
         deprecated=['md5_crypt']))
     is_active = Column(Boolean, default=True)
-
-    posts = relationship("Post", back_populates="author")

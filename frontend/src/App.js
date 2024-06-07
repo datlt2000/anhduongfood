@@ -4,6 +4,7 @@ import 'css/dark.css';
 import 'css/all.css';
 import 'css/light.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Loader from 'components/bases/Loader';
 import router from 'routes/router'
 import { RouterProvider } from 'react-router-dom';
 
@@ -16,6 +17,3 @@ export default function App() {
 	);
 }
 
-function Loader() {
-	return <h2 className='text-center mt-5'>🌀 Loading...</h2>;
-}

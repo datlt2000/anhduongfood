@@ -36,12 +36,22 @@ const Embed = ({ editor, format }) => {
             alt: ''
         })
     }
-    const handleImageUpload = () => {
+    const handleImageUpload = (event) => {
+        console.log("aaa")
+        selection && Transforms.select(editor, selection);
+        selection && ReactEditor.focus(editor);
+        const file = event.target.files[0]
+        const reader = new FileReader();
+        reader.onload = function(readerEvt) {
+            var binaryString = readerEvt.target.result;
+            insertEmbed(editor, { url: binaryString, alt: file.name }, format);
+        };
+        reader.readAsDataURL(file);
         setShowInput(false)
     }
     return (
         <div ref={urlInputRef} className='popup-wrapper'>
-            <Button active={isBlockActive(editor, format)} style={{ border: showInput ? '1px solid lightgray' : '', borderBottom: 'none' }} format={format} onClick={handleButtonClick}>
+            <Button active={isBlockActive(editor, format)} style={{ border: showInput ? '1px solid lightgray' : 'none' }} format={format} onClick={handleButtonClick}>
                 <Icon icon={format} />
             </Button>
             {
@@ -50,10 +60,11 @@ const Embed = ({ editor, format }) => {
                     {
                         format === 'image' &&
                         <div>
-                            <div style={{ display: 'flex', gap: '10px' }} onClick={handleImageUpload}>
+                            <input type='file' name="content-image" id="content-image" accept=".png,.jpg,.jpeg,.webp,.gif,.heif" className="d-none" onChange={e => handleImageUpload(e)} />
+                            <label htmlFor="content-image" style={{ display: 'flex', gap: '10px' }} >
                                 <Icon icon='upload' />
                                 <span>Upload</span>
-                            </div>
+                            </label>
                             <p style={{ textAlign: 'center', opacity: '0.7', width: '100%' }}>OR</p>
 
                         </div>
@@ -63,7 +74,7 @@ const Embed = ({ editor, format }) => {
                         <input type="text" placeholder='Enter alt' value={formData.alt} onChange={e => setFormData(prev => ({ ...prev, alt: e.target.value }))} />
 
 
-                        <Button type='submit'>Save</Button>
+                        <button type='submit'>Save</button>
                     </form>
                 </div>
             }

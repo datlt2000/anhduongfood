@@ -1,30 +1,38 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Container, Form, Card, Col, Row, Button } from "react-bootstrap";
-import { productList } from "const/DressPageDemo";
+import React, { useLayoutEffect, useRef, useState } from "react";
+import { Container, Form, Card, Col, Row, Button, Stack } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import SlateEditor from "components/editor/SlateEditor/SlateEditor";
+import ProductService from "services/admin/product/ProductService";
+import ImageList from "components/gallery/ImageList";
 
 export default function ProductDetail() {
     const navigate = useNavigate();
     const params = useParams();
     const id = params['productId'];
-    const [product, setProduct] = useState(productList[0]);
+    const [product, setProduct] = useState(null);
+    const [files, setFiles] = useState([])
     const slateRef = useRef(null)
-    const [value, setValue] = useState([
+    const [value] = useState([
         {
             type: 'paragaph',
             children: [{ text: '' }],
         },
     ]);
-    useEffect(() => {
-        const prod = productList[id - 1]
-        setProduct(prod)
-        slateRef.current.setValue(prod.description)
+    useLayoutEffect(() => {
+        ProductService.getProduct(id).then(res => {
+            if (res.status === 200) {
+                setProduct(res.data)
+                slateRef.current.setValue(JSON.parse(res.data.description))
+            }
+        })
     }, [id]);
 
-    const handleEditorChange = (newValue) => {
-        setValue(newValue)
-    }
+    useLayoutEffect(() => {
+        if (product) {
+            ProductService.getImages(product).then(res => { setFiles(res) })
+        }
+
+    }, [product])
     const handleEdit = (e) => {
         e.preventDefault();
         navigate("/admin/product/" + id + "/edit");
@@ -39,7 +47,14 @@ export default function ProductDetail() {
     }
     const handleDelete = (e) => {
         e.preventDefault();
-        navigate("/admin/product");
+        ProductService.deleteProduct(id)
+            .then(res => {
+                if (res.status === 200) {
+                    navigate(`/admin/product`)
+                }
+            }).catch(err => {
+                // console.log(err)
+            })
     }
     return (
         <Container fluid className="py-5 px-5">
@@ -56,31 +71,48 @@ export default function ProductDetail() {
                             <Form>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Title</Form.Label>
-                                    <Form.Control type="text" value={product.title} disabled />
+                                    <Form.Control type="text" value={product?.title || ""} disabled />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Price</Form.Label>
-                                    <Form.Control type="text" value={product.price} disabled />
+                                    <Form.Control type="text" value={product?.price || ""} disabled />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Wrap</Form.Label>
-                                    <Form.Control type="text" value={product.wrap} disabled />
+                                    <Form.Control type="text" value={product?.wrap || ""} disabled />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Weight</Form.Label>
-                                    <Form.Control type="text" value={product.weight} disabled />
+                                    <Form.Control type="text" value={product?.weight || ""} disabled />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Expired</Form.Label>
-                                    <Form.Control type="text" value={product.expired} disabled />
+                                    <Form.Control type="text" value={product?.expired || ""} disabled />
                                 </Form.Group>
                                 <Form.Group>
-                                    <Form.Label className="fs-6">Create At</Form.Label>
-                                    <Form.Control type="text" value={product.createdAt} disabled />
+                                    <Form.Label>Images</Form.Label>
+                                    <Stack direction="horizontal" className="pb-1 overflow-auto">
+                                        <div style={{ height: 120 }}>
+                                            <ImageList rowHeight={120} columnWidth={100} cols={1}>
+                                                {files.map((item, idx) => {
+                                                    return <ImageList.Item key={idx} cols={item.cols || 1} rows={item.rows || 1}>
+                                                        <img
+                                                            src={URL.createObjectURL(item.data)}
+                                                            alt={item.title}
+                                                            loading="lazy" />
+                                                    </ImageList.Item>
+                                                })}
+                                            </ImageList>
+                                        </div>
+                                    </Stack>
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Status</Form.Label>
-                                    <Form.Control type="text" value={product.status} disabled />
+                                    <Form.Control type="text" value={product?.status || ""} disabled />
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Label className="fs-6">Create At</Form.Label>
+                                    <Form.Control type="text" value={product?.createdAt || ""} disabled />
                                 </Form.Group>
                             </Form>
                         </Card.Body>
@@ -90,7 +122,7 @@ export default function ProductDetail() {
                             Product Description
                         </Card.Header>
                         <Card.Body className="pb-4">
-                            <SlateEditor ref={slateRef} readOnly onChange={handleEditorChange} initialValue={value} />
+                            <SlateEditor ref={slateRef} readOnly initialValue={value} />
                         </Card.Body>
                     </Card>
                 </Col>

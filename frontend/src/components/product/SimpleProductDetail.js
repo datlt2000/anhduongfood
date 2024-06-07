@@ -5,42 +5,44 @@ export default function SimpleProductDetail(props) {
     return (
         <div>
             <Row className={props.reverse ? "flex-row-reverse" : ""}>
-                <Col xs={1} md={6} className="d-flex text-dark">
+                <Col md={6} className="d-flex align-items-center pt-4">
+                    <div className="px-4 w-100">
+                        <ThumbsSliderVertical slides={props.images} />
+                    </div>
+                </Col>
+                <Col md={6} className="d-flex text-dark">
                     <div className="ps-5 pt-4">
                         <h1 className="fw-bold">
                             {props.title}
                         </h1>
                         <hr style={{ width: '100%' }} />
-                        <h4>
+                        <h5>
                             Giá: {props.price}
-                        </h4>
+                        </h5>
                         <br />
                         <div>
-                            <h5>Đóng gói</h5>
+                            <h6>Đóng gói</h6>
                             <div>{props.wrap}</div>
                             <br />
-                            <h5>Trọng Lượng</h5>
+                            <h6>Trọng Lượng</h6>
                             <div>{props.weight}</div>
                             <br />
-                            <h5>Hạn sử dụng</h5>
+                            <h6>Hạn sử dụng</h6>
                             <div>{props.expired}</div>
                         </div>
-                    </div>
-                </Col>
-                <Col xs={1} md={6} className="d-flex align-items-center pt-4">
-                    <div className="px-4 w-100">
-                        <ThumbsSliderVertical slides={props.images} />
                     </div>
                 </Col>
             </Row>
             <Container className="text-dark py-5">
                 <Row>
+                    <Col lg={10} xs={12} className='mx-auto'>
                         <h3 className="fw-bold">
                             Đặc điểm nổi bật
                         </h3>
                         <div className='d-block mt-3'>
                             {props.description}
                         </div>
+                    </Col>
                 </Row>
             </Container>
 

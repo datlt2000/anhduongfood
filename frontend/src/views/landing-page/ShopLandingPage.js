@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState, useLayoutEffect } from "react";
 import AnimationRevealPage from "components/helpers/AnimationRevealPage";
 import { Container } from "react-bootstrap";
 import FeatureThreeColumnLayout from "components/layouts/FeatureColumnLayout";
 import {
-    reviews, featuresPage, slides, dress, news,
+    reviews, featuresPage, slides,
     collection1, collection2
 }
     from 'const/DressPageDemo';
@@ -11,9 +11,21 @@ import TwoColumnWithImageLayout from "components/layouts/TwoColumnWithImageLayou
 import { advantage } from "const/demodata";
 import ReviewThreeColumnLayout from "components/users/ReviewThreeColumnLayout";
 import SimpleSlide from "components/slide/SimpleSlider";
-import CardListLayout from "components/menu/CardListLayout";
+import CardListLayout from "components/gallery/CardListLayout";
+import ProductService from "services/landing-page/ProductService"
+import PostService from "services/landing-page/PostService";
 
 export default function ShopLandingPage() {
+    const [products, setProducts] = useState([])
+    const [posts, setPosts] = useState(null)
+    useLayoutEffect(() => {
+        ProductService.getProducts().then(res => {
+            setProducts(res)
+        })
+        PostService.getPosts().then(res => {
+            setPosts(res)
+        })
+    }, []);
     return (
         <>
             <AnimationRevealPage disabled>
@@ -25,7 +37,12 @@ export default function ShopLandingPage() {
                     </TwoColumnWithImageLayout>
                 </Container>
                 <Container className="py-5">
-                    <CardListLayout title="Sản phẩm nổi bật" listItem={dress} />
+                    {products ?
+                        <CardListLayout title="Sản phẩm nổi bật">
+                            {products?.map((item, index) => {
+                                return <CardListLayout.Item key={index} item={item} />
+                            })}
+                        </CardListLayout> : <div></div>}
                 </Container>
                 <div>
                     <picture>
@@ -39,7 +56,12 @@ export default function ShopLandingPage() {
                     </Container>
                 </div>
                 <Container className="py-5">
-                    <CardListLayout title="Tin tức & Sự kiện" listItem={news} />
+                    {posts ?
+                        <CardListLayout title="Tin tức & Sự kiện">
+                            {posts?.map((item, index) => {
+                                return <CardListLayout.Item key={index} item={item} />
+                            })}
+                        </CardListLayout> : <div></div>}
                 </Container>
                 <Container fluid className="py-5">
                     <ReviewThreeColumnLayout reviews={reviews} title="Khách hàng nói gì?" description='Lorem ipsum dolor sit amet, 

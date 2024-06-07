@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useState, useLayoutEffect } from "react";
 import AnimationRevealPage from "components/helpers/AnimationRevealPage";
 import { Container } from "react-bootstrap";
-import {
-    dress
-}
-    from 'const/DressPageDemo';
 import banner_2 from 'images/food/banner-2.jpg';
 import TextOnImage from "components/layouts/TextOnImage"
-import CardListLayout from "components/menu/CardListLayout";
+import CardListLayout from "components/gallery/CardListLayout";
+import ProductService from "services/landing-page/ProductService";
 
-export default function ProductList() {
+export default function Products() {
+    const [products, setProducts] = useState([])
+    useLayoutEffect(() => {
+        ProductService.getProducts().then(res => {
+            setProducts(res)
+        })
+    }, []);
     return (
         <>
             <AnimationRevealPage disabled>
@@ -19,7 +22,11 @@ export default function ProductList() {
                     </TextOnImage>
                 </div>
                 <Container className="pb-5">
-                    <CardListLayout title="" listItem={dress} />
+                    <CardListLayout title="" >
+                        {products?.map((item, index) => {
+                            return <CardListLayout.Item key={index} item={item} />
+                        })}
+                    </CardListLayout>
                 </Container>
             </AnimationRevealPage>
         </>

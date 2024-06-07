@@ -7,5 +7,4 @@ class ProductRequest(BaseModel):
     wrap: str | None = None
     weight: str | None = None
     expired: str | None = None
-    images: str
     description: str

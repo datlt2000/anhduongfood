@@ -12,7 +12,7 @@ import { faUser } from "@fortawesome/free-regular-svg-icons";
 
 const Page404 = () => {
   return (
-    <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
+    <div className="bg-body-tertiary my-5 d-flex flex-row align-items-center">
       <Container>
         <Row className="justify-content-center">
           <Col md={6}>

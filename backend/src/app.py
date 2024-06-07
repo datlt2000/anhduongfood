@@ -7,6 +7,7 @@ from api.admin import user_api, product_api as admin_product_api, post_api as ad
 from api.guest import product_api, post_api
 from src.models.database import Base, engine
 from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
 
 
 @asynccontextmanager
@@ -17,6 +18,13 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins="*",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 admin_router = APIRouter(tags=["admin"])
 guest_router = APIRouter(tags=["guest"])

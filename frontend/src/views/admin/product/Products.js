@@ -1,10 +1,15 @@
-import React from "react";
-import { Card, Container, Table, Stack, Button } from "react-bootstrap";
-import { productList } from "const/DressPageDemo";
+import React, { useLayoutEffect, useState } from "react";
+import { Card, Container, Table, Stack, Button, Badge } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
+import ProductService from "services/admin/product/ProductService";
+const STATUS_COLOR = {
+	Draft: "secondary",
+	Pending: "primary",
+	Publish: "success"
+}
 export default function Products() {
 	const navigate = useNavigate();
+	const [products, setProducts] = useState([])
 	const handleClick = (id) => {
 		navigate("/admin/product/" + id);
 	}
@@ -18,6 +23,13 @@ export default function Products() {
 	const handleDelete = (e) => {
 		e.preventDefault();
 	}
+	useLayoutEffect(() => {
+		ProductService.getProducts().then(res => {
+			if (res.status === 200) {
+				setProducts(res.data)
+			}
+		})
+	}, []);
 	return (
 		<Container fluid className="py-5 px-5">
 			<h3>
@@ -33,32 +45,27 @@ export default function Products() {
 						<Button variant="success" className="me-2" onClick={handlePublish}>Publish</Button>
 						<Button variant="danger" className="me-2" onClick={handleDelete}>Delete</Button>
 					</Stack>
-					<Table bordered hover>
+					<Table striped bordered={false} hover>
 						<thead>
 							<tr>
-								<th>#</th>
+								<th style={{ width: '0' }}>#</th>
 								<th>Title</th>
 								<th>Price</th>
 								<th>Weight</th>
 								<th>Expired</th>
 								<th>Status</th>
-								<th>Created At</th>
-								<th>Updated At</th>
 							</tr>
 						</thead>
 						<tbody>
-							{productList.map((item, idx) => {
+							{products?.map((item, idx) => {
 								return (
 									<tr role="button" onClick={() => handleClick(item.id)} key={idx}>
-										<td>{item.id}</td>
+										<td style={{ width: '0' }}>{item.id}</td>
 										<td>{item.title}</td>
 										<td>{item.wrap}</td>
 										<td>{item.weight}</td>
 										<td>{item.expired}</td>
-										<td>{item.status}</td>
-										<td>{item.read}</td>
-										<td>{item.createdAt}</td>
-										<td>{item.updateAt}</td>
+										<td><Badge pill bg={STATUS_COLOR[item.status] ?? STATUS_COLOR['Draft']}>{item.status}</Badge></td>
 									</tr>);
 							})}
 						</tbody>

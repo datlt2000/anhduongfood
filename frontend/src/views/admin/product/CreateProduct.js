@@ -1,24 +1,46 @@
 import React, { useState } from "react";
-import { Container, Form, Card, Col, Row, Button } from "react-bootstrap";
-import { productList } from "const/DressPageDemo";
+import { Container, Form, Card, Col, Row, Button, Stack, CloseButton } from "react-bootstrap";
+import { productDefault } from "const/DressPageDemo";
 import { useNavigate } from "react-router-dom";
 import SlateEditor from "components/editor/SlateEditor/SlateEditor";
+import ProductService from "services/admin/product/ProductService";
+import { MdAdd } from "react-icons/md";
+import ImageInput from "components/input/ImageInput";
+import ImageList from "components/gallery/ImageList";
 
 export default function CreateProduct() {
-    const navigate = useNavigate();
-    const [product] = useState(productList[0]);
+    const navigate = useNavigate()
+    const [product, setProduct] = useState(productDefault);
+    const [files, setFiles] = useState([])
     const [value, setValue] = useState([
         {
             type: 'paragaph',
             children: [{ text: '' }],
         },
-    ]);
+    ])
     const handleEditorChange = (newValue) => {
         setValue(newValue)
     }
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setProduct((product) => ({ ...product, [name]: value }));
+    }
+    const addFile = (event) => {
+        setFiles([...files, { data: event.target.files[0] }])
+    }
+    const removeFile = (idx) => {
+        files.splice(idx, 1);
+        setFiles([...files])
+    }
     const handleCreate = (e) => {
         e.preventDefault();
-
+        ProductService.createProduct({ ...product, "description": JSON.stringify(value) }, files)
+            .then(res => {
+                if (res.status === 200) {
+                    navigate(`/admin/product/${res.data.id}`)
+                }
+            }).catch(err => {
+            })
     }
     const handleCancel = (e) => {
         e.preventDefault();
@@ -39,31 +61,50 @@ export default function CreateProduct() {
                             <Form>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Title</Form.Label>
-                                    <Form.Control type="text" placeholder="Enter title" />
+                                    <Form.Control type="text" name="title" placeholder="Enter Title" value={product?.title} onChange={handleChange} />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Price</Form.Label>
-                                    <Form.Control type="text" value={product.price} />
+                                    <Form.Control type="text" name="price" placeholder="Enter Price" value={product?.price} onChange={handleChange} />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Wrap</Form.Label>
-                                    <Form.Control type="text" value={product.status} />
+                                    <Form.Control type="text" name="wrap" placeholder="Enter Wrap" value={product?.wrap} onChange={handleChange} />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Weight</Form.Label>
-                                    <Form.Control type="text" value={product.weight} />
+                                    <Form.Control type="text" name="weight" placeholder="Enter Weight" value={product?.weight} onChange={handleChange} />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Expired</Form.Label>
-                                    <Form.Control type="text" value={product.expired} />
+                                    <Form.Control type="text" name="expired" placeholder="Enter Expired" value={product?.expired} onChange={handleChange} />
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Label>Images</Form.Label>
+                                    <Stack direction="horizontal" className="pb-1 overflow-auto">
+                                        <ImageInput className="me-1" icon={<MdAdd size={30} className="mx-auto mt-auto" />} onChange={addFile}>Add Photos</ImageInput>
+                                        <div style={{ height: 120 }}>
+                                            <ImageList rowHeight={120} columnWidth={100} cols={1}>
+                                                {files.map((item, idx) => {
+                                                    return <ImageList.Item key={idx} cols={item.cols || 1} rows={item.rows || 1}>
+                                                        <img
+                                                            src={URL.createObjectURL(item.data)}
+                                                            alt={item.title}
+                                                            loading="lazy" />
+                                                        <CloseButton className="position-absolute top-0 end-0 btn-close-white" onClick={() => removeFile(idx)} />
+                                                    </ImageList.Item>
+                                                })}
+                                            </ImageList>
+                                        </div>
+                                    </Stack>
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Label className="fs-6">Status</Form.Label>
+                                    <Form.Control type="text" name="status" value={product.status} disabled />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Create At</Form.Label>
                                     <Form.Control type="text" value={new Date().toISOString().substring(0, 10) + ""} disabled />
-                                </Form.Group>
-                                <Form.Group>
-                                    <Form.Label className="fs-6">Status</Form.Label>
-                                    <Form.Control type="text" value={product.status} disabled />
                                 </Form.Group>
                             </Form>
                         </Card.Body>

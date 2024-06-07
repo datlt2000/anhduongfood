@@ -1,13 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Container, Form, Card, Col, Row, Button } from "react-bootstrap";
-import { productList } from "const/DressPageDemo";
+import React, { useLayoutEffect, useRef, useState } from "react";
+import { Container, Form, Card, Col, Row, Button, Stack, CloseButton } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import SlateEditor from "components/editor/SlateEditor/SlateEditor";
+import ProductService from "services/admin/product/ProductService";
+import { MdAdd } from "react-icons/md";
+import ImageInput from "components/input/ImageInput";
+import ImageList from "components/gallery/ImageList";
 
 export default function EditProduct() {
     const navigate = useNavigate();
     const params = useParams();
-    const [product, setProduct] = useState(productList[0]);
+    const [product, setProduct] = useState(null);
+    const [files, setFiles] = useState([])
     const id = params['productId'];
     const slateRef = useRef()
     const [value, setValue] = useState([
@@ -17,18 +21,39 @@ export default function EditProduct() {
         },
     ]);
 
-    useEffect(() => {
-        const prod = productList[id - 1]
-        setProduct(prod)
-        slateRef.current.setValue(prod.description)
+    useLayoutEffect(() => {
+        ProductService.getProduct(id).then(res => {
+            if (res.status === 200) {
+                setProduct(res.data)
+                slateRef.current.setValue(JSON.parse(res.data.description))
+            }
+        })
     }, [id]);
-
+    useLayoutEffect(() => {
+        if (product) {
+            ProductService.getImages(product).then(res => { setFiles(res) })
+        }
+    }, [product])
+    const addFile = (event) => {
+        setFiles([...files, { data: event.target.files[0] }])
+    }
+    const removeFile = (idx) => {
+        files[idx].delete = true
+        setFiles([...files])
+    }
     const handleEditorChange = (newValue) => {
         setValue(newValue)
     }
+    const handleChange = (event) => {
+        event.preventDefault();
+        const { name, value } = event.target;
+        setProduct((product) => ({ ...product, [name]: value }));
+    }
     const handleSave = (e) => {
         e.preventDefault();
-
+        ProductService.editProduct(id, { ...product, "description": JSON.stringify(value) }, files).then(res => {
+            navigate(`/admin/product/${id}`)
+        })
     }
     const handleCancel = (e) => {
         e.preventDefault();
@@ -49,31 +74,51 @@ export default function EditProduct() {
                             <Form>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Title</Form.Label>
-                                    <Form.Control type="text" value={product.title} />
+                                    <Form.Control type="text" name="title" value={product?.title || ""} onChange={handleChange} />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Price</Form.Label>
-                                    <Form.Control type="text" value={product.price} />
+                                    <Form.Control type="text" name="price" value={product?.price || ""} onChange={handleChange} />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Wrap</Form.Label>
-                                    <Form.Control type="text" value={product.wrap} />
+                                    <Form.Control type="text" name="wrap" value={product?.wrap || ""} onChange={handleChange} />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Weight</Form.Label>
-                                    <Form.Control type="text" value={product.weight} />
+                                    <Form.Control type="text" name="weight" value={product?.weight || ""} onChange={handleChange} />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Expired</Form.Label>
-                                    <Form.Control type="text" value={product.expired} />
+                                    <Form.Control type="text" name="expired" value={product?.expired || ""} onChange={handleChange} />
                                 </Form.Group>
                                 <Form.Group>
-                                    <Form.Label className="fs-6">Create At</Form.Label>
-                                    <Form.Control type="text" value={product.createdAt} />
+                                    <Form.Label>Images</Form.Label>
+                                    <Stack direction="horizontal" className="pb-1 overflow-auto">
+                                        <ImageInput className="me-1" icon={<MdAdd size={30} className="mx-auto mt-auto" />} onChange={addFile}>Add Photos</ImageInput>
+                                        <div style={{ height: 120 }}>
+                                            <ImageList rowHeight={120} columnWidth={100} cols={1}>
+                                                {files.map((item, idx) => {
+                                                    if (item?.delete) return null
+                                                    return <ImageList.Item key={idx} cols={item.cols || 1} rows={item.rows || 1}>
+                                                        <img
+                                                            src={URL.createObjectURL(item.data)}
+                                                            alt={item.title}
+                                                            loading="lazy" />
+                                                        <CloseButton className="position-absolute top-0 end-0 btn-close-white" onClick={() => removeFile(idx)} />
+                                                    </ImageList.Item>
+                                                })}
+                                            </ImageList>
+                                        </div>
+                                    </Stack>
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Status</Form.Label>
-                                    <Form.Control type="text" value={product.status} />
+                                    <Form.Control type="text" value={product?.status || ""} disabled />
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Label className="fs-6">Create At</Form.Label>
+                                    <Form.Control type="text" value={product?.createdAt || ""} disabled />
                                 </Form.Group>
                             </Form>
                         </Card.Body>

@@ -16,8 +16,8 @@ async def get_user(user_id: int, db: AsyncSession):
 
 
 async def create_user(user: UserRequest, db: AsyncSession):
-    user_model = User()
-    user_model.email = user.email
+    user_dict = user.model_dump(exclude={"password"})
+    user_model = User(**user_dict)
     user_model.hashed_password = user.password
     db.add(user_model)
     await db.commit()

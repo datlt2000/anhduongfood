@@ -29,7 +29,7 @@ export const navLink = [
         title: "Sản Phẩm"
     },
     {
-        url: process.env.REACT_APP_DOMAIN_URL + "/blog",
+        url: process.env.REACT_APP_DOMAIN_URL + "/post",
         title: "Tin Tức"
     },
     {
@@ -67,7 +67,18 @@ export const featuresPage = {
         }
     ]
 }
-
+export const postDefault = {
+    id: 1,
+    url: process.env.REACT_APP_DOMAIN_URL + "/blog/1",
+    image: product1,
+    title: "",
+    description: "",
+    author: "dat.letrong",
+    createdAt: "",
+    status: 'Draft',
+    contentHtml: "",
+    content: ""
+}
 export const news = [
     {
         id: 1,
@@ -300,7 +311,21 @@ export const contact = {
     description: "Bạn muốn liên hệ với chúng tôi, hãy điền các ô bên dưới và chúng tôi sẽ liên hệ sớm nhất có thể!"
 
 }
-
+export const productDefault = {
+    id: 1,
+    url: process.env.REACT_APP_DOMAIN_URL + "/product/1",
+    image: product2,
+    images: "imageUrl",
+    title: "",
+    price: "",
+    wrap: "",
+    weight: "",
+    expired: "",
+    descriptionHtml: "",
+    status: "Draft",
+    description: [
+    ]
+}
 export const productList = [
     {
         id: 1,

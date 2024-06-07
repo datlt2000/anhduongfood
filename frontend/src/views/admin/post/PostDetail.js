@@ -1,26 +1,35 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Container, Form, Card, Col, Row, Button } from "react-bootstrap";
-import { news } from "const/DressPageDemo";
+import React, { useLayoutEffect, useRef, useState } from "react";
+import { Container, Form, Card, Col, Row, Button, Stack } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import SlateEditor from "components/editor/SlateEditor/SlateEditor";
-
+import PostService from "services/admin/post/PostService";
+import ImageList from "components/gallery/ImageList";
 export default function PostDetail() {
     const navigate = useNavigate();
     const params = useParams();
     const slateRef = useRef()
     const id = params['postId'];
-    const [post, setPost] = useState(news[0]);
+    const [post, setPost] = useState(null);
+    const [files, setFiles] = useState([])
     const [value, setValue] = useState([
         {
             type: 'paragaph',
             children: [{ text: '' }],
         },
     ]);
-    useEffect(() => {
-        const po = news[id-1]
-        setPost(po);
-        slateRef.current.setValue(po.content)
+    useLayoutEffect(() => {
+        PostService.getPost(id).then(res => {
+            if (res.status === 200) {
+                setPost(res.data)
+                slateRef.current.setValue(JSON.parse(res.data.content))
+            }
+        })
     }, [id]);
+    useLayoutEffect(() => {
+        if (post) {
+            PostService.getImages(post).then(res => { setFiles(res) })
+        }
+    }, [post])
     const handleEditorChange = (newValue) => {
         setValue(newValue)
     }
@@ -37,7 +46,14 @@ export default function PostDetail() {
     }
     const handleDelete = (e) => {
         e.preventDefault();
-        navigate("/admin/post");
+        PostService.deletePost(id)
+            .then(res => {
+                if (res.status === 200) {
+                    navigate(`/admin/post`)
+                }
+            }).catch(err => {
+                // console.log(err)
+            })
     }
     return (
         <Container fluid className="py-5 px-5">
@@ -54,19 +70,40 @@ export default function PostDetail() {
                             <Form>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Title</Form.Label>
-                                    <Form.Control type="text" value={post.title} disabled />
+                                    <Form.Control type="text" value={post?.title || ""} disabled />
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Label className="fs-6">Description</Form.Label>
+                                    <Form.Control name="description" value={post?.description || ""} type="text" disabled />
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Label>Images</Form.Label>
+                                    <Stack direction="horizontal" className="pb-1 overflow-auto">
+                                        <div style={{ height: 120 }}>
+                                            <ImageList rowHeight={120} columnWidth={100} cols={1}>
+                                                {files.map((item, idx) => {
+                                                    return <ImageList.Item key={idx} cols={item.cols || 1} rows={item.rows || 1}>
+                                                        <img
+                                                            src={URL.createObjectURL(item.data)}
+                                                            alt={item.title}
+                                                            loading="lazy" />
+                                                    </ImageList.Item>
+                                                })}
+                                            </ImageList>
+                                        </div>
+                                    </Stack>
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Author</Form.Label>
-                                    <Form.Control type="text" value={post.author} disabled />
+                                    <Form.Control type="text" value={post?.author || ""} disabled />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Create At</Form.Label>
-                                    <Form.Control type="text" value={post.createdAt} disabled />
+                                    <Form.Control type="text" value={post?.createdAt || ""} disabled />
                                 </Form.Group>
                                 <Form.Group>
                                     <Form.Label className="fs-6">Status</Form.Label>
-                                    <Form.Control type="text" value={post.status} disabled />
+                                    <Form.Control type="text" value={post?.status || ""} disabled />
                                 </Form.Group>
                             </Form>
                         </Card.Body>
@@ -89,7 +126,7 @@ export default function PostDetail() {
                             <Button variant="success" className="action-button" onClick={handlePushlish}>Publish</Button>
                             <Button variant="primary" className="action-button" onClick={handleEdit}>Edit</Button>
                             <Button variant="warning" className="action-button" onClick={handleCancel}>Cancel</Button>
-                            <Button variant="danger"className="action-button" onClick={handleDelete}>Delete</Button>
+                            <Button variant="danger" className="action-button" onClick={handleDelete}>Delete</Button>
                         </Card.Body>
                     </Card>
                 </Col>

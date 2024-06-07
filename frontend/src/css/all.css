@@ -1,8 +1,3 @@
-body {
-    --bs-body-font-size: 1rem !important;
-    --bs-body-font-weight: 450 !important;
-    line-height: 1.625;
-}
 
 .card-shadow:hover {
     box-shadow: 0 10px 20px rgba(0, 0, 0, .12), 0 4px 8px rgba(0, 0, 0, .06) !important;
@@ -130,7 +125,7 @@ body {
 
 .sidenav-menu-item {
     padding: 1.75rem 0.5rem 0.75rem;
-    font-size: 0.8rem;
+    font-size: 0.875rem;
     font-weight: 750;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -138,7 +133,7 @@ body {
 }
 
 .shadow-right {
-    box-shadow: 0 .15rem 1.75rem 0 rgba(58, 59, 69, .15) !important
+    box-shadow: 0 2px 5px #0000001a, 0 2px 3px #0000000f;
 }
 
 .shadow-bottom {
@@ -262,8 +257,35 @@ body {
         display: inline-block;
     }
 }
+
 .action-button {
     width: 80px;
     margin-bottom: 8px;
     margin-right: 10px;
+}
+
+.form-label {
+    margin-bottom: 0rem !important;
+    margin-top: .5rem;
+}
+
+.item-shadow {
+    box-shadow: 0 1px 3px #0000001a, 0 1px 2px #0000000f;
+}
+
+.image-list-item-img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    display: block;
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+}
+.image-list-item {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+}
+.h5 {
+    font-size: 1.125rem !important;
 }

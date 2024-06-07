@@ -14,7 +14,6 @@ const AdminLayout = () => {
 	const [sidebarShow, setSidebarShow] = useState(true);
 
 	const hideSideBar = () => {
-		console.log("a")
 		setSidebarShow(!sidebarShow);
 	}
 

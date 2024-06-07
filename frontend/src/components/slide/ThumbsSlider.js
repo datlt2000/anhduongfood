@@ -22,9 +22,9 @@ export default function ThumbsSlider(props) {
                 modules={[FreeMode, Thumbs, Navigation]}
             >
                 {props.slides.map((item, index) => {
-                    return <SwiperSlide key={index}>
+                    return <SwiperSlide key={index} className='my-auto'>
                         <picture>
-                            <img src={item.imageXs} alt='summer collection' style={{ width: '100%', height: '100%' }} />
+                            <img src={item} alt='collection' style={{ width: '100%', height: '100%' }} />
                         </picture>
                     </SwiperSlide>
                 })}
@@ -40,8 +40,8 @@ export default function ThumbsSlider(props) {
             >
                 {props.slides.map((item, index) => {
                     return <SwiperSlide key={index}>
-                        <div style={{ height: '100px', width: '100px', borderRadius: '0.75rem', overflow: 'hidden' }}>
-                            <img src={item.imageXs} alt='summer collection' style={{ width: '100%' }} />
+                        <div style={{ height: '100px', width: '100px', borderRadius: '0.75rem', overflow: 'hidden' }} role='button'>
+                            <img src={item} alt='summer collection' style={{ height: '100%', width: '100%', objectFit: 'cover' }} />
                         </div>
                     </SwiperSlide>
                 })}

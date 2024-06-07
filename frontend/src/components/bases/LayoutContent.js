@@ -1,11 +1,11 @@
 import React, { Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { Spinner } from 'react-bootstrap'
+import Loader from './Loader'
 
 const LayoutContent = ({ routes }) => {
     return (
-        <>
-            <Suspense fallback={<Spinner color="primary" />}>
+        <div>
+            <Suspense fallback={<Loader color="primary" />}>
                 <Routes>
                     {routes.map((route, idx) => {
                         return (
@@ -23,7 +23,7 @@ const LayoutContent = ({ routes }) => {
                     <Route path="/" element={<Navigate to="dashboard" replace />} />
                 </Routes>
             </Suspense>
-        </>
+        </div>
     )
 }
 

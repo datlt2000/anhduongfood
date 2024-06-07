@@ -85,28 +85,28 @@ const Toolbar = (props) => {
                 toolbarGroups.map((group, index) =>
                     <span key={index} className='toolbar-grp'>
                         {
-                            group.map((element) => {
+                            group.map((element, idx) => {
                                 switch (element.type) {
                                     case 'block':
-                                        return <BlockButton key={element.id} {...element} />
+                                        return <BlockButton key={idx} {...element} />
                                     case 'mark':
-                                        return <MarkButton key={element.id} {...element} />
+                                        return <MarkButton key={idx} {...element} />
                                     case 'dropdown':
-                                        return <Dropdown key={element.id} {...element} />
+                                        return <Dropdown key={idx} {...element} />
                                     case 'link':
-                                        return <LinkButton key={element.id} active={isBlockActive(editor, 'link')} editor={editor} />
+                                        return <LinkButton key={idx} active={isBlockActive(editor, 'link')} editor={editor} />
                                     case 'embed':
-                                        return <Embed key={element.id} format={element.format} editor={editor} />
+                                        return <Embed key={idx} format={element.format} editor={editor} />
                                     case 'color-picker':
-                                        return <ColorPicker key={element.id} activeMark={activeMark} format={element.format} editor={editor} />
+                                        return <ColorPicker key={idx} activeMark={activeMark} format={element.format} editor={editor} />
                                     case 'table':
-                                        return <TableSelector key={element.id} editor={editor} />
+                                        return <TableSelector key={idx} editor={editor} />
                                     case 'id':
-                                        return <Id editor={editor} />
+                                        return <Id key={idx} editor={editor} />
                                     case 'equation':
-                                        return <EquationButton editor={editor} />
+                                        return <EquationButton key={idx} editor={editor} />
                                     case 'codeToText':
-                                        return <CodeToTextButton handleButtonClick={handleCodeToText} />
+                                        return <CodeToTextButton key={idx} handleButtonClick={handleCodeToText} />
                                     default:
                                         return null
                                 }

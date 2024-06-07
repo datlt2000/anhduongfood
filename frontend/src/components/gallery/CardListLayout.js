@@ -1,6 +1,13 @@
 import { Row, Col } from "react-bootstrap";
 import VertialCard from "./VertialCard";
 
+const Item = (props) => {
+    return (
+        <Col className="my-2">
+            <VertialCard item={props.item} />
+        </Col>
+    )
+}
 export default function CardListLayout(props) {
     const num = props.number ? props.number : 4;
 
@@ -12,14 +19,10 @@ export default function CardListLayout(props) {
             </div>
             <br />
             <Row lg={num} md={(num - 1) > 0 ? (num - 1) : 1} xs={(num - 2) > 0 ? (num - 2) : 1}>
-                {props.listItem.map((item, index) => {
-                    return (
-                        <Col key={index} className="my-2">
-                            <VertialCard item={item} />
-                        </Col>
-                    )
-                })}
+                {props.children}
             </Row>
         </>
     );
 }
+
+CardListLayout.Item = Item

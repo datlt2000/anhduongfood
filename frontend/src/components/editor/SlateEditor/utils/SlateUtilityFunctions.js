@@ -193,6 +193,6 @@ export const getBlock = (props) => {
         case 'htmlCode':
             return <HtmlCode {...props} />
         default:
-            return <div {...element.attr} {...attributes}>{children}</div>
+            return <div {...element.attr} {...attributes} style={{ whiteSpace: 'pre-wrap' }}>{children} </div>
     }
 } 
