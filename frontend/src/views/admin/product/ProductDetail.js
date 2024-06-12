@@ -18,13 +18,16 @@ export default function ProductDetail() {
             children: [{ text: '' }],
         },
     ]);
-    useLayoutEffect(() => {
+    const reload = () => {
         ProductService.getProduct(id).then(res => {
             if (res.status === 200) {
                 setProduct(res.data)
                 slateRef.current.setValue(JSON.parse(res.data.description))
             }
         })
+    }
+    useLayoutEffect(() => {
+        reload();
     }, [id]);
 
     useLayoutEffect(() => {
@@ -39,6 +42,13 @@ export default function ProductDetail() {
     }
     const handlePushlish = (e) => {
         e.preventDefault();
+        ProductService.publishProduct(id).then(res => {
+            // todo show toast and change view
+            if (res.status === 200)
+                reload();
+        }).catch(err => {
+            // todo show toast
+        })
 
     }
     const handleCancel = (e) => {

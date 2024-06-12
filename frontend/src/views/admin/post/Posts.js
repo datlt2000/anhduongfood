@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useCallback } from "react";
 import { Container, Table, Card, Button, Stack, Form, Badge } from "react-bootstrap";
 import CustomPagination from "components/pagination/CustomPagination";
 import { useNavigate } from "react-router-dom";
@@ -7,13 +7,13 @@ import PostService from "services/admin/post/PostService";
 const STATUS_COLOR = {
 	Draft: "secondary",
 	Pending: "primary",
-	Publish: "success"
+	Published: "success"
 }
 export default function Posts() {
 	const navigate = useNavigate();
 	const [posts, setPosts] = useState([]);
 	const [order, setOrder] = useState('asc');
-	const [orderBy, setOrderBy] = useState('calories');
+	const [orderBy, setOrderBy] = useState('id');
 	const [selected, setSelected] = useState([]);
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -33,7 +33,6 @@ export default function Posts() {
 		setSelected([]);
 	};
 	const handleRowClick = (event, id) => {
-		event.stopPropagation()
 		const selectedIndex = selected.indexOf(id);
 		let newSelected = [];
 
@@ -69,19 +68,36 @@ export default function Posts() {
 	}
 	const handlePublish = (e) => {
 		e.preventDefault();
+		PostService.publishPosts(selected).then(res => {
+			// todo show toast and change view
+			if (res.status === 200)
+				reload();
+		}).catch(err => {
+			// todo show toast
+		})
 	}
 	const handleDelete = (e) => {
 		e.preventDefault();
-
+		PostService.deletePosts(selected).then(res => {
+			// todo show toast and change view
+			if (res.status === 200)
+				reload();
+		}).catch(err => {
+			// todo show toast
+		})
 	}
-	useLayoutEffect(() => {
-		PostService.getPosts().then(res => {
+	const reload = useCallback(() => {
+		const data = { orderBy: orderBy, order: order, start: page * rowsPerPage, limit: rowsPerPage }
+		PostService.getPosts(data).then(res => {
 			if (res.status === 200) {
-				setPosts(res.data);
-				setTotal(30);
+				setPosts(res.data.data);
+				setTotal(res.data.total);
 			}
 		})
-	}, []);
+	}, [orderBy, order, page, rowsPerPage])
+	useLayoutEffect(() => {
+		reload();
+	}, [reload]);
 	return (
 		<Container fluid className="py-5 px-5">
 			<h3>
@@ -101,7 +117,7 @@ export default function Posts() {
 								<option value="20">20</option>
 							</Form.Select>
 						</div>
-						<Stack direction="horizontal" className=" ms-auto">
+						<Stack direction="horizontal" className="ms-auto">
 							<Button variant="primary" className="ms-auto me-2" onClick={handleCreate}>Create</Button>
 							<Button variant="success" className="me-2" onClick={handlePublish}>Publish</Button>
 							<Button variant="danger" className="me-2" onClick={handleDelete}>Delete</Button>
@@ -111,7 +127,7 @@ export default function Posts() {
 						<thead>
 							<tr>
 								<th>
-									<Form.Check checked={selected.length === posts.length} onClick={handleSelectAllClick} />
+									<Form.Check checked={selected.length === posts.length} onChange={handleSelectAllClick} />
 								</th>
 								<th style={{ width: '0' }}>ID</th>
 								<th>Title</th>
@@ -125,7 +141,9 @@ export default function Posts() {
 								return (
 									<tr role="button" onClick={() => handleClick(item.id)} key={idx}>
 										<td>
-											<Form.Check checked={selected.indexOf(item.id) !== -1} name={`item-${item.id}`} id={`post-item-${item.id}`} onClick={(event) => handleRowClick(event, item.id)} />
+											<Form.Check checked={selected.indexOf(item.id) !== -1} name={`item-${item.id}`} id={`post-item-${item.id}`}
+												onChange={(event) => handleRowClick(event, item.id)}
+												onClick={(e) => e.stopPropagation()} />
 										</td>
 										<td style={{ width: '0' }}>{item.id}</td>
 										<td>{item.title}</td>
@@ -142,7 +160,7 @@ export default function Posts() {
 						<div>
 							Showing {page * rowsPerPage + 1} to {(page + 1) * rowsPerPage} of {total}
 						</div>
-						<CustomPagination className="ms-auto my-auto" size="sm" pageNumber={pageNum} page={page} handleChangePage={handleChangePage}/>
+						<CustomPagination className="ms-auto my-auto" size="sm" pageNumber={pageNum} page={page} handleChangePage={handleChangePage} />
 					</Stack>
 				</Card.Body>
 

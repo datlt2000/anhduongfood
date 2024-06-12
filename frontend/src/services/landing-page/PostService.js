@@ -6,10 +6,10 @@ const PostUrl = {
     GET_ONE: (id) => url + "/" + id
 }
 const PostService = {
-    getPosts: async () => {
-        return await api.get(PostUrl.GET_ALL()).then(res => {
+    getPosts: async (data) => {
+        return await api.post(PostUrl.GET_ALL(), data).then(res => {
             if (res.status === 200) {
-                return res.data.map(post => {
+                data = res.data.data.map(post => {
                     return {
                         ...post,
                         url: process.env.REACT_APP_BASE_URL + PostUrl.GET_ONE(post.id),
@@ -17,6 +17,7 @@ const PostService = {
                         description: post.createdAt
                     }
                 })
+                return { total: res.data.total, data: data }
             }
         })
     },

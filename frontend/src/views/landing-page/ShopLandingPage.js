@@ -19,11 +19,11 @@ export default function ShopLandingPage() {
     const [products, setProducts] = useState([])
     const [posts, setPosts] = useState(null)
     useLayoutEffect(() => {
-        ProductService.getProducts().then(res => {
-            setProducts(res)
+        ProductService.getProducts({ orderBy: 'id', order: 'asc', start: 0, limit: 8 }).then(res => {
+            setProducts(res.data)
         })
-        PostService.getPosts().then(res => {
-            setPosts(res)
+        PostService.getPosts({ orderBy: 'id', order: 'asc', start: 0, limit: 8 }).then(res => {
+            setPosts(res.data)
         })
     }, []);
     return (

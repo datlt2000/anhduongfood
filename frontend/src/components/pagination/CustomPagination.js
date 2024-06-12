@@ -25,7 +25,7 @@ export default function CustomPagination({ page, pageNumber, handleChangePage, c
             <Pagination.Prev disabled={page === 0} onClick={() => { handleChangePage(page - 1) }} />
             {pageList.map((item, idx) => {
                 if (item) {
-                    return <Pagination.Item active={item === page + 1} onClick={(e) => handleChangePage(e, item - 1)}>{item}</Pagination.Item>
+                    return <Pagination.Item key={idx} active={item === page + 1} onClick={(e) => handleChangePage(e, item - 1)}>{item}</Pagination.Item>
                 }
                 return <Pagination.Ellipsis />
             })}

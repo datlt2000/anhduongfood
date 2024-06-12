@@ -9,7 +9,7 @@ class PostResponse(BaseModel):
     id: int
     title: str
     status: POST_STATUS
-    description: str
-    content: str
-    images: List[FileModelResponse] = []
+    description: str | None
+    content: str | None
+    images: List[FileModelResponse] | None = []
     createdAt: date

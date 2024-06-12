@@ -1,17 +1,26 @@
 import React, { useState, useLayoutEffect } from "react";
 import AnimationRevealPage from "components/helpers/AnimationRevealPage";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Stack } from "react-bootstrap";
 import blogBg from 'images/blog-bg.jpg';
 import TextOnImage from "components/layouts/TextOnImage"
 import CardListLayout from "components/gallery/CardListLayout";
 import ItemList from "components/gallery/ItemList";
 import PostService from "services/landing-page/PostService";
+import CustomPagination from "components/pagination/CustomPagination";
 
 export default function Blog() {
     const [posts, setPosts] = useState([])
+    const [page, setPage] = useState(0);
+    const [total, setTotal] = useState(0);
+    const pageNum = Math.ceil(total / 8);
+    const handleChangePage = (event, newPage) => {
+        if (newPage >= 0 && newPage < pageNum)
+            setPage(newPage);
+    };
     useLayoutEffect(() => {
-        PostService.getPosts().then(res => {
-            setPosts(res)
+        PostService.getPosts({ orderBy: 'id', order: 'asc', start: page * 8, limit: 8 }).then(res => {
+            setPosts(res.data)
+            setTotal(res.total)
         })
     }, []);
     return (
@@ -42,6 +51,9 @@ export default function Blog() {
                                 </ItemList>
                             </Col>
                         </Row> : <div>No data</div>}
+                    <Stack>
+                        <CustomPagination className="ms-auto me-auto" size="sm" pageNumber={pageNum} page={page} handleChangePage={handleChangePage} />
+                    </Stack>
                 </Container>
             </AnimationRevealPage>
         </>

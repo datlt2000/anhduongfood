@@ -1,29 +1,80 @@
 from fastapi import HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, text, func, delete, update
 from src.const import path
 from src.models.products import Product
 from src.models.products import ProductImage
-from src.request.product_request import ProductRequest
+from src.request.ProductRequest import ProductRequest
 from src.response.ProductResponse import ProductResponse
 import os
 import pathlib
 from datetime import datetime
 from src.const import date_time
+from src.const.enum import PRODUCT_STATUS
+from src.request.SearchRequest import SearchRequest
+from src.response.SearchResponse import SearchResponse
+from src.request.ListIdRequest import ListIdRequest
+from pydantic import ValidationError
 
 
-async def get_products(db: AsyncSession):
-    results = await db.execute(select(Product))
+async def get_products(search_request: SearchRequest, db: AsyncSession) -> list[ProductResponse]:
+    results = await db.execute(select(Product)
+                               .order_by(text(search_request.orderBy + " " + search_request.order))
+                               .offset(search_request.start)
+                               .limit(search_request.limit))
     products = results.scalars().all()
-    return products
+    data = [ProductResponse.model_validate(
+        product, from_attributes=True, strict=True) for product in products]
+    return data
+
+
+async def count_products(search_request: SearchRequest, db: AsyncSession) -> int:
+    count_result = await db.execute(select(func.count(Product.id)).select_from(Product))
+    count = count_result.scalar()
+    return count
+
+
+async def search_products(search_request: SearchRequest, db: AsyncSession) -> SearchResponse[ProductResponse]:
+    products = await get_products(search_request, db)
+    count = await count_products(search_request, db)
+    search_response = SearchResponse(
+        **search_request.model_dump(), total=count, data=products)
+    return search_response
+
+
+async def get_published_products(search_request: SearchRequest, db: AsyncSession) -> SearchResponse[ProductResponse]:
+    results = await db.execute(select(Product)
+                               .where(Product.status == PRODUCT_STATUS.PUBLISHED)
+                               .order_by(text(search_request.orderBy + " " + search_request.order))
+                               .offset(search_request.start)
+                               .limit(search_request.limit))
+    products = results.scalars().all()
+    data = [ProductResponse.model_validate(
+        product, from_attributes=True, strict=True) for product in products]
+    count_result = await db.execute(select(func.count(Product.id)).select_from(Product).where(Product.status == PRODUCT_STATUS.PUBLISHED))
+    count = count_result.scalar()
+    search_response = SearchResponse(
+        **search_request.model_dump(), total=count, data=data)
+    return search_response
 
 
 async def get_product(product_id: int, db: AsyncSession) -> Product:
     product_model = await db.get(Product, product_id)
     if not product_model:
         raise HTTPException(
-            status_code=404, detail=f"Id {product_id}: Does not exist")
+            status_code=404, detail=f"Product {product_id}: Does not exist")
+    return product_model
+
+
+async def get_published_product(product_id: int, db: AsyncSession) -> Product:
+    product_model = await db.get(Product, product_id)
+    if not product_model:
+        raise HTTPException(
+            status_code=404, detail=f"Product {product_id}: Does not exist")
+    if product_model.status != PRODUCT_STATUS.PUBLISHED:
+        raise HTTPException(
+            status_code=400, detail=f"Product {product_id}: Does not in proper state")
     return product_model
 
 
@@ -98,8 +149,27 @@ async def update_product(product_id: int, product: ProductRequest, db: AsyncSess
     return product_model
 
 
+async def publish_product(product_id: int, db: AsyncSession):
+    product_model = await get_product(product_id, db)
+    product_model.status = PRODUCT_STATUS.PUBLISHED
+    await db.commit()
+    return product_model
+
+
+async def publish_products(product_ids: ListIdRequest, db: AsyncSession):
+    await db.execute(update(Product).where(Product.id.in_(product_ids.ids)).values(status=PRODUCT_STATUS.PUBLISHED))
+    await db.commit()
+    return {"message": "Success"}
+
+
 async def delete_product(product_id: int, db: AsyncSession):
     product_model = await get_product(product_id, db)
     await db.delete(product_model)
+    await db.commit()
+    return {"message": "Success"}
+
+
+async def delete_products(product_ids: ListIdRequest, db: AsyncSession):
+    await db.execute(delete(Product).where(Product.id.in_(product_ids.ids)))
     await db.commit()
     return {"message": "Success"}

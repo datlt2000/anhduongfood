@@ -1,28 +1,76 @@
 from fastapi import HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, text, func, delete, update
 from src.const import path
 from src.models.posts import Post, PostImage
-from src.request.post_request import PostRequest
+from src.request.PostRequest import PostRequest
 from src.const import date_time
 import os
 from datetime import datetime
 import pathlib
 from src.response.PostResponse import PostResponse
+from src.const.enum import POST_STATUS
+from src.request.SearchRequest import SearchRequest
+from src.response.SearchResponse import SearchResponse
+from src.request.ListIdRequest import ListIdRequest
 
 
-async def get_posts(db: AsyncSession):
-    results = await db.execute(select(Post))
+async def get_posts(search_request: SearchRequest, db: AsyncSession) -> list[PostResponse]:
+    results = await db.execute(select(Post)
+                               .order_by(text(search_request.orderBy + " " + search_request.order))
+                               .offset(search_request.start)
+                               .limit(search_request.limit))
     posts = results.scalars().all()
-    return posts
+    return [PostResponse.model_validate(post, from_attributes=True, strict=True) for post in posts]
+
+
+async def count_posts(search_request: SearchRequest, db: AsyncSession) -> int:
+    count_result = await db.execute(select(func.count(Post.id)).select_from(Post))
+    count = count_result.scalar()
+    return count
+
+
+async def search_posts(search_request: SearchRequest, db: AsyncSession) -> SearchResponse[PostResponse]:
+    posts = await get_posts(search_request, db)
+    count = await count_posts(search_request, db)
+    search_response = SearchResponse(
+        **search_request.model_dump(), data=posts, total=count)
+    return search_response
+
+
+async def get_published_posts(search_request: SearchRequest, db: AsyncSession):
+    results = await db.execute(select(Post)
+                               .where(Post.status == POST_STATUS.PUBLISHED)
+                               .order_by(text(search_request.orderBy + " " + search_request.order))
+                               .offset(search_request.start)
+                               .limit(search_request.limit))
+    products = results.scalars().all()
+    data = [PostResponse.model_validate(
+        product, from_attributes=True, strict=True) for product in products]
+    count_result = await db.execute(select(func.count(Post.id)).select_from(Post).where(Post.status == POST_STATUS.PUBLISHED))
+    count = count_result.scalar()
+    search_response = SearchResponse(
+        **search_request.model_dump(), total=count, data=data)
+    return search_response
 
 
 async def get_post(post_id: int, db: AsyncSession) -> Post:
     post_model = await db.get(Post, post_id)
     if not post_model:
         raise HTTPException(
-            status_code=404, detail=f"Id {post_id}: Does not exist")
+            status_code=404, detail=f"Post {post_id}: Does not exist")
+    return post_model
+
+
+async def get_published_post(post_id: int, db: AsyncSession) -> Post:
+    post_model = await db.get(Post, post_id)
+    if not post_model:
+        raise HTTPException(
+            status_code=404, detail=f"Post {post_id}: Does not exist")
+    if post_model.status != POST_STATUS.PUBLISHED:
+        raise HTTPException(
+            status_code=400, detail=f"Post {post_id}: Does not in proper state")
     return post_model
 
 
@@ -96,8 +144,27 @@ async def update_post(post_id: int, post: PostRequest, db: AsyncSession):
     return post_model
 
 
+async def publish_post(post_id: int, db: AsyncSession):
+    post_model = await get_post(post_id, db)
+    post_model.status = POST_STATUS.PUBLISHED
+    await db.commit()
+    return post_model
+
+
+async def publish_posts(post_ids: ListIdRequest, db: AsyncSession):
+    await db.execute(update(Post).where(Post.id.in_(post_ids.ids)).values(status=POST_STATUS.PUBLISHED))
+    await db.commit()
+    return {"message": "Success"}
+
+
 async def delete_post(post_id: int, db: AsyncSession):
     post_model = await get_post(post_id, db)
     await db.delete(post_model)
+    await db.commit()
+    return {"message": "Success"}
+
+
+async def delete_posts(post_ids: ListIdRequest, db: AsyncSession):
+    await db.execute(delete(Post).where(Post.id.in_(post_ids.ids)))
     await db.commit()
     return {"message": "Success"}

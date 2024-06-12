@@ -17,13 +17,16 @@ export default function PostDetail() {
             children: [{ text: '' }],
         },
     ]);
-    useLayoutEffect(() => {
+    const reload = () => {
         PostService.getPost(id).then(res => {
             if (res.status === 200) {
                 setPost(res.data)
                 slateRef.current.setValue(JSON.parse(res.data.content))
             }
         })
+    }
+    useLayoutEffect(() => {
+        reload();
     }, [id]);
     useLayoutEffect(() => {
         if (post) {
@@ -39,6 +42,13 @@ export default function PostDetail() {
     }
     const handlePushlish = (e) => {
         e.preventDefault();
+        PostService.publishPost(id).then(res => {
+            // todo show toast and change view
+            if (res.status === 200)
+                reload();
+        }).catch(err => {
+            // todo show toast
+        })
     }
     const handleCancel = (e) => {
         e.preventDefault();

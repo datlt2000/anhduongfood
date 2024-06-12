@@ -2,6 +2,7 @@ import api from 'services/http'
 
 const url = "/admin/product"
 const ProductUrl = {
+    SEARCH: () => url + "/search",
     GET_ALL: () => url,
     GET_ONE: (id) => url + "/" + id,
     UPLOAD_IMAGE: (productId) => `${url}/${productId}/image`,
@@ -9,11 +10,13 @@ const ProductUrl = {
     DELETE_IMAGE: (productId, imageId) => `${url}/${productId}/image/${imageId}`,
     CREATE: () => url,
     EDIT: (id) => url + "/" + id,
+    PUBLISH: (id) => url + "/" + id + "/publish",
+    PUBLISH_LIST: () => url + "/publish",
     DELETE: (id) => url + "/" + id
 }
 const ProductService = {
-    getProducts: async () => {
-        return await api.get(ProductUrl.GET_ALL())
+    getProducts: async (data) => {
+        return await api.post(ProductUrl.SEARCH(), data)
     },
     createProduct: async (data, files) => {
         let res = await api.post(ProductUrl.CREATE(), data)
@@ -58,6 +61,15 @@ const ProductService = {
     },
     deleteProduct: async (id) => {
         return await api.delete(ProductUrl.DELETE(id))
+    },
+    deleteProducts: async (ids) => {
+        return await api.delete(ProductUrl.GET_ALL(), { ids: ids })
+    },
+    publishProduct: async (id) => {
+        return await api.put(ProductUrl.PUBLISH(id))
+    },
+    publishProducts: async (ids) => {
+        return await api.put(ProductUrl.PUBLISH_LIST(), { ids: ids })
     },
 }
 

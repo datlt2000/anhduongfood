@@ -2,6 +2,7 @@ import api from 'services/http'
 
 const url = "/admin/post"
 const PostUrl = {
+    SEARCH: () => url + "/search",
     GET_ONE: (id) => url + "/" + id,
     GET_ALL: () => url,
     UPLOAD_IMAGE: (postId) => `${url}/${postId}/image`,
@@ -9,11 +10,13 @@ const PostUrl = {
     DELETE_IMAGE: (postId, imageId) => `${url}/${postId}/image/${imageId}`,
     CREATE: () => url,
     EDIT: (id) => url + "/" + id,
+    PUBLISH: (id) => url + "/" + id + "/publish",
+    PUBLISH_LIST: () => url + "/publish",
     DELETE: (id) => url + "/" + id
 }
 const PostService = {
-    getPosts: async () => {
-        return await api.get(PostUrl.GET_ALL())
+    getPosts: async (data) => {
+        return await api.post(PostUrl.SEARCH(), data)
     },
     createPost: async (data, files) => {
         let res = await api.post(PostUrl.CREATE(), data)
@@ -58,6 +61,15 @@ const PostService = {
     },
     deletePost: async (id) => {
         return await api.delete(PostUrl.DELETE(id))
+    },
+    deletePosts: async (ids) => {
+        return await api.delete(PostUrl.GET_ALL(), { ids: ids })
+    },
+    publishPost: async (id) => {
+        return await api.put(PostUrl.PUBLISH(id))
+    },
+    publishPosts: async (ids) => {
+        return await api.put(PostUrl.PUBLISH_LIST(), { ids: ids })
     },
 }
 

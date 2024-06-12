@@ -6,10 +6,10 @@ const ProductUrl = {
     GET_ONE: (id) => url + "/" + id
 }
 const ProductService = {
-    getProducts: async () => {
-        return await api.get(ProductUrl.GET_ALL()).then((res) => {
+    getProducts: async (data) => {
+        return await api.post(ProductUrl.GET_ALL(), data).then((res) => {
             if (res.status === 200) {
-                const products = res.data
+                const products = res.data.data
                 const data = products.map((product) => {
                     return {
                         ...product,
@@ -18,7 +18,7 @@ const ProductService = {
                         url: process.env.REACT_APP_BASE_URL + ProductUrl.GET_ONE(product.id)
                     }
                 })
-                return data
+                return { total: res.data.total, data: data }
             }
         })
     },

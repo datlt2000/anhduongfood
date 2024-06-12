@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from src.models.users import User
-from src.request.user_request import UserRequest
+from src.request.UserRequest import UserRequest
 
 
 async def get_users(db: AsyncSession):
