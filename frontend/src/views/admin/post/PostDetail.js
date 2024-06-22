@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Container, Form, Card, Col, Row, Button, Stack } from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import SlateEditor from "components/editor/SlateEditor/SlateEditor";
@@ -17,17 +17,17 @@ export default function PostDetail() {
             children: [{ text: '' }],
         },
     ]);
-    const reload = () => {
+    const reload = useCallback(() => {
         PostService.getPost(id).then(res => {
             if (res.status === 200) {
                 setPost(res.data)
                 slateRef.current.setValue(JSON.parse(res.data.content))
             }
         })
-    }
+    }, [id])
     useLayoutEffect(() => {
         reload();
-    }, [id]);
+    }, [id, reload]);
     useLayoutEffect(() => {
         if (post) {
             PostService.getImages(post).then(res => { setFiles(res) })

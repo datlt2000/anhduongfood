@@ -1,7 +1,5 @@
 import React from 'react'
 import { useSelected, useFocused } from "slate-react";
-import Icon from '../../common/Icon'
-import useResize from '../../utils/customHooks/useResize.js'
 
 
 const Image = ({ attributes, element, children }) => {

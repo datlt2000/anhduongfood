@@ -21,7 +21,7 @@ export default function Products() {
             setProducts(res.data)
             setTotal(res.total)
         })
-    }, []);
+    }, [page]);
     return (
         <>
             <AnimationRevealPage disabled>

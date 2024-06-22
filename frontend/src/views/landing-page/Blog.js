@@ -22,7 +22,7 @@ export default function Blog() {
             setPosts(res.data)
             setTotal(res.total)
         })
-    }, []);
+    }, [page]);
     return (
         <>
             <AnimationRevealPage disabled>
