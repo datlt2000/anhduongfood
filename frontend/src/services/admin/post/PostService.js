@@ -68,8 +68,14 @@ const PostService = {
     publishPost: async (id) => {
         return await api.put(PostUrl.PUBLISH(id))
     },
+    unpublishPost: async (id) => {
+        return await api.put(url + "/" + id + "/unpublish")
+    },
     publishPosts: async (ids) => {
         return await api.put(PostUrl.PUBLISH_LIST(), { ids: ids })
+    },
+    unpublishPosts: async (ids) => {
+        return await api.put(url + "/unpublish", { ids: ids })
     },
 }
 

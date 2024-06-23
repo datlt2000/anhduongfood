@@ -3,11 +3,47 @@ import { Card, Container, Table, Stack, Button, Badge, Form } from "react-bootst
 import { useNavigate } from "react-router-dom";
 import ProductService from "services/admin/product/ProductService";
 import CustomPagination from "components/pagination/CustomPagination";
+import { FaArrowDown } from "react-icons/fa";
+import { FaArrowUp } from "react-icons/fa";
 const STATUS_COLOR = {
 	Draft: "secondary",
 	Pending: "primary",
 	Published: "success"
 }
+const header = [
+	{
+		title: "Id",
+		property: "id"
+	},
+	{
+		title: "Title",
+		property: "title"
+	},
+	{
+		title: "Price",
+		property: "price"
+	},
+	{
+		title: "Wrap",
+		property: "wrap"
+	},
+	{
+		title: "Weight",
+		property: "weight"
+	},
+	{
+		title: "Expired",
+		property: "expired"
+	},
+	{
+		title: "Status",
+		property: "status"
+	},
+	{
+		title: "Create At",
+		property: "createdAt"
+	}
+]
 export default function Products() {
 	const navigate = useNavigate();
 	const [products, setProducts] = useState([]);
@@ -18,10 +54,11 @@ export default function Products() {
 	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [total, setTotal] = useState(0);
 	const pageNum = Math.ceil(total / rowsPerPage);
-	const handleRequestSort = (event, property) => {
+	const handleRequestSort = (property) => {
 		const isAsc = orderBy === property && order === 'asc';
 		setOrder(isAsc ? 'desc' : 'asc');
 		setOrderBy(property);
+		setSelected([]);
 	};
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
@@ -75,6 +112,16 @@ export default function Products() {
 			// todo show toast
 		})
 	}
+	const handleUnpublish = (e) => {
+		e.preventDefault();
+		ProductService.unpublishProducts(selected).then(res => {
+			// todo show toast and change view
+			if (res.status === 200)
+				reload();
+		}).catch(err => {
+			// todo show toast
+		})
+	}
 	const handleDelete = (e) => {
 		e.preventDefault();
 		ProductService.deleteProducts(selected).then(res => {
@@ -119,6 +166,7 @@ export default function Products() {
 						<Stack direction="horizontal" className="ms-auto">
 							<Button variant="primary" className="ms-auto me-2" onClick={handleCreate}>Create</Button>
 							<Button variant="success" className="me-2" onClick={handlePublish}>Publish</Button>
+							<Button variant="secondary" className="me-2" onClick={handleUnpublish}>Unpublish</Button>
 							<Button variant="danger" className="me-2" onClick={handleDelete}>Delete</Button>
 						</Stack>
 					</Stack>
@@ -128,12 +176,15 @@ export default function Products() {
 								<th>
 									<Form.Check checked={selected.length === products.length} onChange={handleSelectAllClick} />
 								</th>
-								<th style={{ width: '0' }}>ID</th>
-								<th>Title</th>
-								<th>Price</th>
-								<th>Weight</th>
-								<th>Expired</th>
-								<th>Status</th>
+								{header.map((item, idx) => {
+									return <th key={idx}>
+										<span role="button" onClick={() => { handleRequestSort(item.property) }}>
+											<span className="me-1">{item.title}</span>
+											{orderBy === item.property ? (order === "asc" ? <FaArrowUp /> : <FaArrowDown />)
+												: <FaArrowUp style={{ visibility: "hidden" }} />}
+										</span>
+									</th>
+								})}
 							</tr>
 						</thead>
 						<tbody>
@@ -145,12 +196,14 @@ export default function Products() {
 												onChange={(event) => handleRowClick(event, item.id)}
 												onClick={(event) => event.stopPropagation()} />
 										</td>
-										<td style={{ width: '0' }}>{item.id}</td>
+										<td>{item.id}</td>
 										<td>{item.title}</td>
+										<td>{item.price}</td>
 										<td>{item.wrap}</td>
 										<td>{item.weight}</td>
 										<td>{item.expired}</td>
 										<td><Badge pill bg={STATUS_COLOR[item.status] ?? STATUS_COLOR['Draft']}>{item.status}</Badge></td>
+										<td>{item.createdAt}</td>
 									</tr>);
 							})}
 						</tbody>

@@ -71,6 +71,12 @@ const ProductService = {
     publishProducts: async (ids) => {
         return await api.put(ProductUrl.PUBLISH_LIST(), { ids: ids })
     },
+    unpublishProduct: async (id) => {
+        return await api.put(url + "/" + id + "/unpublish")
+    },
+    unpublishProducts: async (ids) => {
+        return await api.put(url + "/unpublish", { ids: ids })
+    },
 }
 
 export default ProductService;

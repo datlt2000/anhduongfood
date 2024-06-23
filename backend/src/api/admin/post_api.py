@@ -28,6 +28,11 @@ async def publish_posts(post_ids: ListIdRequest, db: AsyncSession = Depends(get_
     return await post_controller.publish_posts(post_ids, db)
 
 
+@router.put("/post/unpublish")
+async def unpublish_posts(post_ids: ListIdRequest, db: AsyncSession = Depends(get_db)):
+    return await post_controller.unpublish_posts(post_ids, db)
+
+
 @router.put("/post/{post_id}")
 async def update_post(post_id: int, post: PostRequest, db: AsyncSession = Depends(get_db)):
     return await post_controller.update_post(post_id, post, db)
@@ -36,6 +41,11 @@ async def update_post(post_id: int, post: PostRequest, db: AsyncSession = Depend
 @router.put("/post/{post_id}/publish")
 async def publish_post(post_id: int, db: AsyncSession = Depends(get_db)):
     return await post_controller.publish_post(post_id, db)
+
+
+@router.put("/post/{post_id}/unpublish")
+async def unpublish_post(post_id: int, db: AsyncSession = Depends(get_db)):
+    return await post_controller.unpublish_post(post_id, db)
 
 
 @router.post("/post/{post_id}/image")

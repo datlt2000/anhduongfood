@@ -151,8 +151,21 @@ async def publish_post(post_id: int, db: AsyncSession):
     return post_model
 
 
+async def unpublish_post(post_id: int, db: AsyncSession):
+    post_model = await get_post(post_id, db)
+    post_model.status = POST_STATUS.DRAFT
+    await db.commit()
+    return post_model
+
+
 async def publish_posts(post_ids: ListIdRequest, db: AsyncSession):
     await db.execute(update(Post).where(Post.id.in_(post_ids.ids)).values(status=POST_STATUS.PUBLISHED))
+    await db.commit()
+    return {"message": "Success"}
+
+
+async def unpublish_posts(post_ids: ListIdRequest, db: AsyncSession):
+    await db.execute(update(Post).where(Post.id.in_(post_ids.ids)).values(status=POST_STATUS.DRAFT))
     await db.commit()
     return {"message": "Success"}
 

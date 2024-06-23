@@ -51,6 +51,17 @@ export default function ProductDetail() {
         })
 
     }
+    const handleUnpushlish = (e) => {
+        e.preventDefault();
+        ProductService.unpublishProduct(id).then(res => {
+            // todo show toast and change view
+            if (res.status === 200)
+                reload();
+        }).catch(err => {
+            // todo show toast
+        })
+
+    }
     const handleCancel = (e) => {
         e.preventDefault();
         navigate("/admin/product");
@@ -142,7 +153,9 @@ export default function ProductDetail() {
                             Product Action
                         </Card.Header>
                         <Card.Body className="pb-4">
-                            <Button variant="success" className="action-button" onClick={handlePushlish}>Publish</Button>
+                            {product?.status === "Draft" ?
+                                <Button variant="success" className="action-button" onClick={handlePushlish}>Publish</Button>
+                                : <Button variant="secondary" className="action-button" onClick={handleUnpushlish}>Unpublish</Button>}
                             <Button variant="primary" className="action-button" onClick={handleEdit}>Edit</Button>
                             <Button variant="danger" className="action-button" onClick={handleDelete}>Delete</Button>
                             <Button variant="warning" className="action-button" onClick={handleCancel}>Cancel</Button>

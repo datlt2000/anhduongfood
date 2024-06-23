@@ -156,8 +156,21 @@ async def publish_product(product_id: int, db: AsyncSession):
     return product_model
 
 
+async def unpublish_product(product_id: int, db: AsyncSession):
+    product_model = await get_product(product_id, db)
+    product_model.status = PRODUCT_STATUS.DRAFT
+    await db.commit()
+    return product_model
+
+
 async def publish_products(product_ids: ListIdRequest, db: AsyncSession):
     await db.execute(update(Product).where(Product.id.in_(product_ids.ids)).values(status=PRODUCT_STATUS.PUBLISHED))
+    await db.commit()
+    return {"message": "Success"}
+
+
+async def unpublish_products(product_ids: ListIdRequest, db: AsyncSession):
+    await db.execute(update(Product).where(Product.id.in_(product_ids.ids)).values(status=PRODUCT_STATUS.DRAFT))
     await db.commit()
     return {"message": "Success"}
 

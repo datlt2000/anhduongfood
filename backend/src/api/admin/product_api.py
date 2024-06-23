@@ -28,6 +28,11 @@ async def publish_products(product_ids: ListIdRequest, db: AsyncSession = Depend
     return await product_controller.publish_products(product_ids, db)
 
 
+@router.put("/product/unpublish")
+async def unpublish_products(product_ids: ListIdRequest, db: AsyncSession = Depends(get_db)):
+    return await product_controller.unpublish_products(product_ids, db)
+
+
 @router.put("/product/{product_id}")
 async def update_product(product_id: int, product: ProductRequest, db: AsyncSession = Depends(get_db)):
     return await product_controller.update_product(product_id, product, db)
@@ -36,6 +41,11 @@ async def update_product(product_id: int, product: ProductRequest, db: AsyncSess
 @router.put("/product/{product_id}/publish")
 async def publish_product(product_id: int, db: AsyncSession = Depends(get_db)):
     return await product_controller.publish_product(product_id, db)
+
+
+@router.put("/product/{product_id}/unpublish")
+async def unpublish_product(product_id: int, db: AsyncSession = Depends(get_db)):
+    return await product_controller.unpublish_product(product_id, db)
 
 
 @router.post("/product/{product_id}/image")
