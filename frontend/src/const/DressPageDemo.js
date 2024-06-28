@@ -13,7 +13,7 @@ import product4 from 'images/food/product4.jpg';
 import product5 from 'images/food/product5.jpg';
 import contactBg from 'images/contact-bg.jpg';
 import { faUserShield, faHeadset, faMedal, faTruck } from "@fortawesome/free-solid-svg-icons";
-import aboutVideo from 'images/com-chay.mp4';
+import aboutVideo from 'images/food/com-chay.mp4';
 
 export const navLink = [
     {
