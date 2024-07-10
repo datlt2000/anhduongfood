@@ -16,6 +16,7 @@ class Product(database.Model):
     expired = Column(String)
     status = Column(ChoiceType(PRODUCT_STATUS), default=PRODUCT_STATUS.DRAFT)
     description = Column(String)
+    descriptionHtml = Column(String)
     images = relationship("ProductImage", back_populates="product", lazy="selectin")
 
 

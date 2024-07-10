@@ -9,19 +9,10 @@ services:
         expose:
             - "8000"
         networks:
-            - app-network
+            - app_network
         volumes:
             - ./backend/src:/app/src
 
-    frontend:
-        build:
-            context: ./frontend
-        container_name: frontend
-        ports:
-            - "3000:80"
-        networks:
-            - app-network
-
 networks:
-    app-network:
+    app_network:
         driver: bridge

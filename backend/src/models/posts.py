@@ -13,6 +13,7 @@ class Post(database.Model):
     status = Column(ChoiceType(POST_STATUS), default=POST_STATUS.DRAFT)
     description = Column(String)
     content = Column(String)
+    contentHtml = Column(String)
 
     author_id = Column(Integer, ForeignKey("user.id"))
 
