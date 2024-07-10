@@ -20,7 +20,7 @@
     "he": "^1.2.0",
     "html-react-parser": "^5.1.10",
     "interweave": "^13.1.0",
-    "next": "^14.2.4",
+    "next": "^13.2.4",
     "react": "^18",
     "react-bootstrap": "^2.10.4",
     "react-dom": "^18",
