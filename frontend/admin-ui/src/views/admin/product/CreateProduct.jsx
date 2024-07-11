@@ -38,14 +38,14 @@ export default function CreateProduct() {
         ProductService.createProduct({ ...product, "description": JSON.stringify(value), "descriptionHtml": serializer(value) }, files)
             .then(res => {
                 if (res.status === 200) {
-                    navigate(`/admin/product/${res.data.id}`)
+                    navigate(`/product/${res.data.id}`)
                 }
             }).catch(err => {
             })
     }
     const handleCancel = (e) => {
         e.preventDefault();
-        navigate("/admin/product");
+        navigate("/product");
     }
     return (
         <Container fluid className="py-5 px-5">

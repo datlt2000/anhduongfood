@@ -34,7 +34,7 @@ export default function CreatePost() {
         PostService.createPost({ ...post, "content": JSON.stringify(value), "contentHtml": serializer(value) }, files)
             .then(res => {
                 if (res.status === 200) {
-                    navigate(`/admin/post/${res.data.id}`)
+                    navigate(`/post/${res.data.id}`)
                 }
             }).catch(err => {
                 // console.log(err)
@@ -42,7 +42,7 @@ export default function CreatePost() {
     }
     const handleCancel = (e) => {
         e.preventDefault();
-        navigate("/admin/post");
+        navigate("/post");
     }
     const handleChange = (event) => {
         const { name, value } = event.target;

@@ -30,7 +30,7 @@ export default function ProductDetail() {
     }, [id, reload]);
     const handleEdit = (e) => {
         e.preventDefault();
-        navigate("/admin/product/" + id + "/edit");
+        navigate("/product/" + id + "/edit");
     }
     const handlePushlish = (e) => {
         e.preventDefault();
@@ -56,14 +56,14 @@ export default function ProductDetail() {
     }
     const handleCancel = (e) => {
         e.preventDefault();
-        navigate("/admin/product");
+        navigate("/product");
     }
     const handleDelete = (e) => {
         e.preventDefault();
         ProductService.deleteProduct(id)
             .then(res => {
                 if (res.status === 200) {
-                    navigate(`/admin/product`)
+                    navigate(`/product`)
                 }
             }).catch(err => {
                 // console.log(err)

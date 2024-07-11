@@ -49,12 +49,12 @@ export default function EditProduct() {
     const handleSave = (e) => {
         e.preventDefault();
         ProductService.editProduct(id, { ...product, "description": JSON.stringify(value), "descriptionHtml": serializer(value) }, files).then(res => {
-            navigate(`/admin/product/${id}`);
+            navigate(`/product/${id}`);
         })
     }
     const handleCancel = (e) => {
         e.preventDefault();
-        navigate("/admin/product/" + id);
+        navigate("/product/" + id);
     }
     return (
         <Container fluid className="py-5 px-5">

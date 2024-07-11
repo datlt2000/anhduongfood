@@ -49,12 +49,12 @@ export default function EditPost() {
     const handleSave = (e) => {
         e.preventDefault();
         PostService.editPost(id, { ...post, "content": JSON.stringify(value), "contentHtml": serializer(value) }, files).then(res => {
-            navigate(`/admin/post/${id}`)
+            navigate(`/post/${id}`)
         })
     }
     const handleCancel = (e) => {
         e.preventDefault();
-        navigate("/admin/post/" + id);
+        navigate("/post/" + id);
     }
     return (
         <Container fluid className="py-5 px-5">

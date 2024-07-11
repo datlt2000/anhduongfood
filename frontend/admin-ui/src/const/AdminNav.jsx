@@ -9,12 +9,12 @@ const _nav = [
     },
     {
         name: "DashBoard",
-        to: import.meta.env.VITE_APP_DOMAIN_URL,
+        to: import.meta.env.VITE_APP_DOMAIN_URL + '/admin',
         icon: faChartLine
     },
     {
         name: 'Products',
-        to: import.meta.env.VITE_APP_DOMAIN_URL + '/product',
+        to: import.meta.env.VITE_APP_DOMAIN_URL + '/admin/product',
         icon: faBoxArchive
     },
     // {
@@ -22,7 +22,7 @@ const _nav = [
     // },
     {
         name: 'Blog',
-        to: import.meta.env.VITE_APP_DOMAIN_URL + '/post',
+        to: import.meta.env.VITE_APP_DOMAIN_URL + '/admin/post',
         icon: faBookOpen,
     },
     // {

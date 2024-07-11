@@ -32,7 +32,7 @@ export default function PostDetail() {
     }
     const handleEdit = (e) => {
         e.preventDefault();
-        navigate("/admin/post/" + id + "/edit");
+        navigate("/post/" + id + "/edit");
     }
     const handlePushlish = (e) => {
         e.preventDefault();
@@ -56,14 +56,14 @@ export default function PostDetail() {
     }
     const handleCancel = (e) => {
         e.preventDefault();
-        navigate("/admin/post");
+        navigate("/post");
     }
     const handleDelete = (e) => {
         e.preventDefault();
         PostService.deletePost(id)
             .then(res => {
                 if (res.status === 200) {
-                    navigate(`/admin/post`)
+                    navigate(`/post`)
                 }
             }).catch(err => {
                 // console.log(err)

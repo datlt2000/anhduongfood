@@ -96,11 +96,11 @@ export default function Products() {
 		setPage(0);
 	};
 	const handleClick = (id) => {
-		navigate("/admin/product/" + id);
+		navigate("/product/" + id);
 	}
 	const handleCreate = (e) => {
 		e.preventDefault();
-		navigate("/admin/product/create");
+		navigate("/product/create");
 	}
 	const handlePublish = (e) => {
 		e.preventDefault();

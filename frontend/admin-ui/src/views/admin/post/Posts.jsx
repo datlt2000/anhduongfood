@@ -86,11 +86,11 @@ export default function Posts() {
 		setPage(0);
 	};
 	const handleClick = (id) => {
-		navigate("/admin/post/" + id);
+		navigate("/post/" + id);
 	}
 	const handleCreate = (e) => {
 		e.preventDefault();
-		navigate("/admin/post/create");
+		navigate("/post/create");
 	}
 	const handlePublish = (e) => {
 		e.preventDefault();
