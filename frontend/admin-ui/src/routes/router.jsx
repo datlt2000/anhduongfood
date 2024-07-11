@@ -38,7 +38,7 @@ const router = createBrowserRouter([
         element: <Page500 />
     },
     {
-        path: "/admin/*",
+        path: "/*",
         name: "Admin Pages",
         element: <AdminLayout />
     }
