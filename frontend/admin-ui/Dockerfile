@@ -11,7 +11,7 @@ RUN npm run build
 # 2. For Nginx setup
 FROM nginx:alpine
 # Copy static assets from builder stage
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html/admin
 # remove default nginx configuration file
 RUN rm /etc/nginx/conf.d/default.conf
 # replace with custom one
