@@ -8,5 +8,3 @@ services:
         container_name: admin-ui
         ports:
             - "3000:80"
-        networks:
-            - ui_app_network
