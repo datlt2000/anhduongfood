@@ -4,27 +4,27 @@ import { faUserShield, faHeadset, faMedal, faTruck } from "@fortawesome/free-sol
 
 export const navLink = [
     {
-        url: process.env.DOMAIN_URL + "/",
+        url: "/",
         title: "Trang chủ"
     },
     {
-        url: process.env.DOMAIN_URL + "/about",
+        url: "/about",
         title: "Giới Thiệu"
     },
     {
-        url: process.env.DOMAIN_URL + "/product",
+        url: "/product",
         title: "Sản Phẩm"
     },
     {
-        url: process.env.DOMAIN_URL + "/post",
+        url: "/post",
         title: "Tin Tức"
     },
     {
-        url: process.env.DOMAIN_URL + "/product",
+        url: "/product",
         title: "Tuyển Dụng"
     },
     {
-        url: process.env.DOMAIN_URL + "/contacts",
+        url: "/contacts",
         title: "Liên Hệ"
     },
 ]
@@ -67,7 +67,7 @@ export const featuresPage = {
 }
 export const postDefault = {
     id: 1,
-    url: process.env.DOMAIN_URL + "/blog/1",
+    url: "/blog/1",
     image: "/images/food/product1.jpg",
     title: "",
     description: "",
@@ -193,7 +193,7 @@ export const contact = {
 }
 export const productDefault = {
     id: 1,
-    url: process.env.DOMAIN_URL + "/product/1",
+    url: "/product/1",
     image: "/images/food/product2.jpg",
     images: "imageUrl",
     title: "",
